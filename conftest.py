@@ -1,7 +1,7 @@
 import pytest
 from django.db import connections
 import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT\
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 db_name = connections.databases['default']['NAME']
 
@@ -18,14 +18,14 @@ def run_sql(sql):
 def django_db_setup():
     from django.conf import settings
 
-    settings.DATABASES['default']['NAME'] = 'the_copied_db'
+    settings.DATABASES['default']['NAME'] = 'test_pgweb'
 
-    run_sql('DROP DATABASE IF EXISTS the_copied_db')
-    run_sql('CREATE DATABASE the_copied_db TEMPLATE ' + db_name)
+    run_sql('DROP DATABASE IF EXISTS test_pgweb')
+    run_sql('CREATE DATABASE test_pgweb TEMPLATE ' + db_name)
 
     yield
 
     for connection in connections.all():
         connection.close()
 
-    run_sql('DROP DATABASE the_copied_db')
+    run_sql('DROP DATABASE test_pgweb')

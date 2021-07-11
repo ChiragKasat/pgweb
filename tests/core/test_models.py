@@ -67,7 +67,7 @@ class TestUserProfileModel(TestCase):
 @pytest.mark.django_db
 class TestOrganisationModel(TestCase):
     def setUp(self):
-        self.user = UserFactory(first_name="John", last_name="Doe", email="johndoe@test.com")
+        self.user = UserFactory(first_name="John", last_name="Doe", email="johndoe@example.com")
         self.user_not_manager = UserFactory()
         self.organisation = OrganisationFactory(name="PostgreSQL", managers=[self.user])
         self.organisation_email = OrganisationEmailFactory(org=self.organisation, address="test address")
@@ -84,7 +84,7 @@ class TestOrganisationModel(TestCase):
         self.assertEquals(self.organisation.title, "PostgreSQL")
 
     def test_managers_string_property(self):
-        self.assertEquals(self.organisation.managers_string, "John Doe (johndoe@test.com)")
+        self.assertEquals(self.organisation.managers_string, "John Doe (johndoe@example.com)")
 
     def test_verify_submitters(self):
         self.assertEquals(self.organisation.verify_submitter(self.user_not_manager), False)

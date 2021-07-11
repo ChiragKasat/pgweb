@@ -97,7 +97,7 @@ class ImportedRSSFeedFactory(DjangoModelFactory):
         model = ImportedRSSFeed
 
     internalname = "planet"
-    url = "https://www.postgresql.org/"
+    url = "https://planet.postgresql.org/"
     purgepattern = "/"
 
 
