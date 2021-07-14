@@ -24,7 +24,7 @@ class TestNewsArticleModel(TestCase):
         self.curr_time = datetime.datetime.now()
         self.manager_of_org = UserFactory()
         self.not_manager = UserFactory()
-        self.organisation_1 = OrganisationFactory(managers=[self.manager_of_org])
+        self.organisation_1 = OrganisationFactory(name='PostgreSQL news', managers=[self.manager_of_org])
         self.organisation_1_email = OrganisationEmailFactory(org=self.organisation_1)
         self.tag1 = NewsTagFactory(urlname="testarticle1", name="test article 1")
         self.tag2 = NewsTagFactory(urlname="testarticle2", name="test article 2")
@@ -45,3 +45,18 @@ class TestNewsArticleModel(TestCase):
 
     def test_taglist_property(self):
         self.assertEquals(self.news_article_1.taglist, 'test article 1, test article 2')
+
+    def test_sentfrom_property(self):
+        self.assertEquals(self.news_article_1.sentfrom, 'PostgreSQL news via PostgreSQL Announce')
+        self.news_article_1.org.fromnameoverride = 'PostgreSQL news'
+        self.assertEquals(self.news_article_1.sentfrom, 'PostgreSQL news')
+
+    def test_displaydate_property(self):
+        self.assertEquals(self.news_article_1.displaydate, self.curr_time.strftime("%Y-%m-%d"))
+
+    def test_block_edit_property(self):
+        self.assertFalse(self.news_article_1.block_edit)
+        self.news_article_1.modstate = 1
+        self.assertTrue(self.news_article_1.block_edit)
+        self.news_article_1.modstate = 2
+        self.assertTrue(self.news_article_1.block_edit)
