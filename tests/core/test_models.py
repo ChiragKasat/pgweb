@@ -67,7 +67,7 @@ class TestUserProfileModel(TestCase):
 @pytest.mark.django_db
 class TestOrganisationModel(TestCase):
     def setUp(self):
-        self.user = UserFactory(first_name="John", last_name="Doe", email="johndoe@example.com")
+        self.user = UserFactory(first_name="John", last_name="Doe", email="johndoe@test.invalid")
         self.user_not_manager = UserFactory()
         self.organisation = OrganisationFactory(name="PostgreSQL", managers=[self.user])
         self.organisation_email = OrganisationEmailFactory(org=self.organisation, address="test address")
@@ -84,7 +84,7 @@ class TestOrganisationModel(TestCase):
         self.assertEquals(self.organisation.title, "PostgreSQL")
 
     def test_managers_string_property(self):
-        self.assertEquals(self.organisation.managers_string, "John Doe (johndoe@example.com)")
+        self.assertEquals(self.organisation.managers_string, "John Doe (johndoe@test.invalid)")
 
     def test_verify_submitters(self):
         self.assertEquals(self.organisation.verify_submitter(self.user_not_manager), False)
@@ -102,8 +102,9 @@ class TestOrganisationModel(TestCase):
 @pytest.mark.django_db
 class TestImportedRSSItem(TestCase):
     def setUp(self):
+        self.item_posttime = datetime.datetime.now()
         self.imported_RSS_feed = ImportedRSSFeedFactory(internalname="test")
-        self.imported_RSS_item = ImportedRSSItemFactory(title="PostgreSQL", feed=self.imported_RSS_feed)
+        self.imported_RSS_item = ImportedRSSItemFactory(title="PostgreSQL", feed=self.imported_RSS_feed, posttime=self.item_posttime)
 
     def test_instance(self):
         self.assertIsInstance(self.imported_RSS_feed, ImportedRSSFeed)
@@ -112,6 +113,9 @@ class TestImportedRSSItem(TestCase):
     def test_display_name(self):
         self.assertEquals(str(self.imported_RSS_feed), "test")
         self.assertEquals(str(self.imported_RSS_item), "PostgreSQL")
+
+    def test_rss_item_date(self):
+        self.assertEquals(self.imported_RSS_item.date, self.item_posttime.strftime("%Y-%m-%d"))
 
 
 @pytest.mark.django_db

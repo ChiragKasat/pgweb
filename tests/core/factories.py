@@ -40,6 +40,7 @@ class UserFactory(DjangoModelFactory):
     last_name = factory.Faker('last_name')
     username = factory.Faker('email')
     password = factory.Faker('password')
+    email = factory.LazyAttribute(lambda u: '%s%s@test.invalid' % (u.first_name.lower(), u.last_name.lower()))
     is_staff = False
     is_superuser = False
 
@@ -64,7 +65,7 @@ class OrganisationFactory(DjangoModelFactory):
     class Meta:
         model = Organisation
 
-    name = "PostgreSQL"
+    name = factory.Sequence(lambda n: "PostgreSQL%s" % n)
     address = "test address"
     url = "https://www.postgresql.org/"
     orgtype = factory.SubFactory(OrganisationTypeFactory)
