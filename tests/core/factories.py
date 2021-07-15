@@ -2,7 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 from pgweb.core.models import Version, UserProfile, Organisation, OrganisationEmail, OrganisationType, OrganisationEmail, ImportedRSSFeed, ImportedRSSItem
 from pgweb.quotes.models import Quote
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 import datetime
 
 
@@ -32,6 +32,13 @@ class QuoteFactory(DjangoModelFactory):
     link = "https://postgresql.org"
 
 
+class GroupFactory(DjangoModelFactory):
+    class Meta:
+        model = Group
+
+    name = "test users"
+
+
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
@@ -43,6 +50,15 @@ class UserFactory(DjangoModelFactory):
     email = factory.LazyAttribute(lambda u: '%s%s@test.invalid' % (u.first_name.lower(), u.last_name.lower()))
     is_staff = False
     is_superuser = False
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for group in extracted:
+                self.groups.add(group)
 
 
 class UserProfileFactory(DjangoModelFactory):
