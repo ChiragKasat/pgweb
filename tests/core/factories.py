@@ -73,11 +73,9 @@ class OrganisationFactory(DjangoModelFactory):
     @factory.post_generation
     def managers(self, create, extracted, **kwargs):
         if not create:
-            # Simple build, do nothing.
             return
 
         if extracted:
-            # A list of groups were passed in, use them
             for user in extracted:
                 self.managers.add(user)
     mailtemplate = "default"
